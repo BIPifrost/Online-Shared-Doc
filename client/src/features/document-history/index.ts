@@ -1,0 +1,1 @@
+export { DocumentHistoryPanel } from "./DocumentHistoryPanel";
