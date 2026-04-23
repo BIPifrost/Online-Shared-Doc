@@ -1,75 +1,112 @@
-# online-shared-doc
+# 在线共享文档协作系统
 
-`online-shared-doc` is the workspace scaffold for the online shared document course project. Task1 establishes the fixed directory layout, root scripts, and the minimum runnable frontend/backend setup required by later tasks.
+这是一个面向课程实验的在线共享文档项目，目标是实现多人同时编辑、实时同步、版本快照、差异对比、导出和断线重连等能力。
 
-## Workspace Layout
+项目采用前后端分离结构：前端负责文档界面、协作体验和交互展示，后端负责文档接口、快照管理、实时通信和 Yjs 协同状态维护。
 
-- `client/`: React + Vite + TypeScript frontend workspace.
-- `server/`: Express + TypeScript backend workspace.
-- `shared/`: shared TypeScript definitions reserved for Task2.
-- `docs/`: API, database, testing, and report support materials.
+## 功能概览
 
-More detailed directory responsibilities are documented in [docs/project-structure.md](docs/project-structure.md).
+当前项目已经具备以下主要功能：
 
-## Quick Start
+- 匿名昵称进入系统
+- 创建文档和加入已有文档
+- 多人实时协同编辑
+- 在线协作者列表展示
+- 聊天消息与系统消息展示
+- Markdown 实时预览
+- 手动保存生成版本快照
+- 快照详情查看
+- 两个版本之间的 diff 对比
+- 导出 Markdown、HTML、TXT
+- 断线检测与自动重连
 
-1. Install all workspace dependencies from the repository root:
+## 技术栈
 
-   ```bash
-   npm install
-   ```
+前端：
 
-2. Start the backend only:
+- React
+- Vite
+- TypeScript
+- CodeMirror 6
+- Yjs
+- Socket.IO Client
+- react-markdown
 
-   ```bash
-   npm run dev:server
-   ```
+后端：
 
-   The current Task1 backend `dev` script compiles the server first and then
-   launches `dist/index.js`. This keeps the startup path stable while the
-   project is still in scaffold stage.
+- Node.js
+- Express
+- TypeScript
+- Socket.IO
+- Yjs / y-websocket
+- SQLite
 
-3. Start the frontend only:
+## 项目结构
 
-   ```bash
-   npm run dev:client
-   ```
+```text
+OnlineSharedDoc/
+├─ client/        前端项目，负责页面、编辑器、预览和交互
+├─ server/        后端项目，负责接口、快照、实时通信和协同状态
+├─ shared/        前后端共享类型定义
+├─ README.md
+├─ package.json
+└─ tsconfig.base.json
+```
 
-   The current Task1 frontend startup flow builds the client workspace from the
-   root script and then serves `client/dist` through a lightweight local preview
-   server. This keeps the React + Vite scaffold stable in the current local
-   environment.
+更细的职责可以简单理解为：
 
-4. Start both together:
+- `client/src/pages/`：页面入口
+- `client/src/features/`：按功能拆分的前端模块
+- `server/src/routes/`：HTTP 路由
+- `server/src/modules/`：文档、历史版本、导出、聊天、协同等后端模块
+- `server/src/sockets/`：Socket.IO 实时事件处理
 
-   ```bash
-   npm run dev
-   ```
+## 本地运行
 
-5. Build both workspaces:
+### 1. 安装依赖
 
-   ```bash
-   npm run build
-   ```
+在项目根目录执行：
 
-## Default Ports
+```bash
+npm install
+```
 
-- Frontend preview server: `5173`
-- Backend HTTP server: `3001`
+### 2. 同时启动前后端
 
-The frontend workspace keeps the Vite configuration in place, including the
-`/api`, `/socket.io`, and `/yjs` proxy targets needed for later tasks. Task1
-uses a stable preview-based startup path while leaving the project on the
-required React + Vite foundation.
+```bash
+npm run dev
+```
 
-## Current Scope
+### 3. 单独启动前端
 
-Task1 intentionally includes only the minimum runnable shell:
+```bash
+npm run dev:client
+```
 
-- fixed directory skeleton
-- root workspace scripts
-- minimal React application entry
-- minimal Express server entry
-- startup and structure documentation
+### 4. 单独启动后端
 
-Task2 and later tasks will fill in shared types, database logic, APIs, real-time collaboration, and UI features.
+```bash
+npm run dev:server
+```
+
+### 5. 构建项目
+
+```bash
+npm run build
+```
+
+## 默认端口
+
+- 前端开发服务：`5173`
+- 后端服务：`3001`
+
+当前前端会通过代理访问后端接口和实时服务，因此开发时通常只需要打开前端地址即可。
+
+## 使用说明
+
+1. 启动项目后，打开浏览器访问前端地址
+2. 输入昵称后创建文档，或通过文档 ID 加入已有文档
+3. 在文档页中进行多人协同编辑
+4. 点击 `Save` 手动生成快照版本
+5. 在左侧版本列表中选择 1 个版本查看详情，选择 2 个版本查看 diff
+6. 点击 `Export` 导出当前最新文档内容
