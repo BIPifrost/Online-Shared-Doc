@@ -30,6 +30,7 @@ export function HomePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [guestName, setGuestName] = useState("");
+  const [docTitle, setDocTitle] = useState("");
   const [docIdInput, setDocIdInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -72,7 +73,7 @@ export function HomePage() {
       setErrorMessage("");
       setIsCreating(true);
 
-      const document = await createDocument(normalizedName);
+      const document = await createDocument(normalizedName, docTitle || undefined);
       navigate(buildDocumentUrl(document.id, normalizedName));
     } catch (error) {
       setErrorMessage(
@@ -106,7 +107,7 @@ export function HomePage() {
     <main className="home-shell">
       <section className="home-hero">
         <div className="home-hero__copy">
-          <span className="home-kicker">Anonymous Collaboration Entry</span>
+          <span className="home-kicker">匿名协作文档入口</span>
           <h1>{HOME_PAGE_TITLE}</h1>
           <p>
             这是多人共享文档实验系统的统一入口页。输入昵称后，你可以创建新的协作文档，
@@ -125,6 +126,17 @@ export function HomePage() {
                 persistGuestName(nextName);
               }}
               placeholder="例如：张三"
+            />
+          </label>
+
+          <label className="field">
+            <span className="field__label">文档名称（可选）</span>
+            <input
+              value={docTitle}
+              onChange={(event) => {
+                setDocTitle(event.target.value);
+              }}
+              placeholder="例如：项目需求文档"
             />
           </label>
 
@@ -171,7 +183,7 @@ export function HomePage() {
 
       <section className="home-notes">
         <div className="home-notes__header">
-          <span className="home-kicker">How It Works</span>
+          <span className="home-kicker">工作原理</span>
           <h2>首页负责完成匿名进入闭环</h2>
         </div>
 

@@ -27,8 +27,8 @@ export function DocumentEntryPage() {
   const toolbarTitle =
     workspace.detail?.title ??
     (workspace.loadState === "loading"
-      ? "Loading document..."
-      : "Document Workspace");
+      ? "正在加载文档..."
+      : "文档工作区");
 
   function handleHistoryClick() {
     document
@@ -48,12 +48,13 @@ export function DocumentEntryPage() {
         latestUpdatedAt={
           workspace.detail?.latestUpdatedAt
             ? formatDateTime(workspace.detail.latestUpdatedAt)
-            : "Waiting for sync"
+            : "等待同步"
         }
         isExportPanelOpen={workspace.isExportPanelOpen}
         onSave={workspace.handleSave}
         onExportClick={workspace.handleExportClick}
         onHistoryClick={handleHistoryClick}
+        onTitleUpdate={workspace.handleTitleUpdate}
       />
 
       <section className="workspace-layout">
@@ -71,28 +72,28 @@ export function DocumentEntryPage() {
             <div className="workspace-panel workspace-panel--editor">
               <div className="workspace-panel__header workspace-panel__header--main">
                 <div>
-                  <p className="workspace-panel__eyebrow">Editor</p>
-                  <h2>Markdown Input</h2>
+                  <p className="workspace-panel__eyebrow">编辑器</p>
+                  <h2>Markdown 输入</h2>
                 </div>
                 <div className="workspace-main__meta">
-                  <span>Current user: {workspace.guestName}</span>
-                  <span>Status: {workspace.latestActivityLabel}</span>
+                  <span>当前用户: {workspace.guestName}</span>
+                  <span>状态: {workspace.latestActivityLabel}</span>
                 </div>
               </div>
 
               {workspace.loadState === "loading" ? (
                 <div className="workspace-feedback">
-                  <strong>Loading</strong>
-                  <p>Fetching document data and starting the collaborative editor.</p>
+                  <strong>加载中</strong>
+                  <p>正在获取文档数据并启动协同编辑器。</p>
                 </div>
               ) : null}
 
               {workspace.loadState === "error" ? (
                 <div className="workspace-feedback workspace-feedback--error">
-                  <strong>Load failed</strong>
+                  <strong>加载失败</strong>
                   <p>{workspace.loadError}</p>
                   <Link className="primary-link" to="/">
-                    Back to Home
+                    返回首页
                   </Link>
                 </div>
               ) : null}
@@ -100,7 +101,7 @@ export function DocumentEntryPage() {
               {workspace.detail && workspace.loadState === "ready" ? (
                 <>
                   <div className="editor-status-banner">
-                    <span className="editor-status-banner__title">Editor State</span>
+                    <span className="editor-status-banner__title">编辑器状态</span>
                     <span>{workspace.latestActivityLabel}</span>
                   </div>
 
@@ -120,8 +121,8 @@ export function DocumentEntryPage() {
             <section className="workspace-panel workspace-panel--preview workspace-panel--preview-main">
               <div className="workspace-panel__header">
                 <div>
-                  <p className="workspace-panel__eyebrow">Preview</p>
-                  <h2>Markdown Preview</h2>
+                  <p className="workspace-panel__eyebrow">预览</p>
+                  <h2>Markdown 预览</h2>
                 </div>
               </div>
               <MarkdownPreview content={workspace.editorContent} />
@@ -132,6 +133,7 @@ export function DocumentEntryPage() {
             isOpen={workspace.isExportPanelOpen}
             exportingFormat={workspace.exportingFormat}
             exportError={workspace.exportError}
+            currentTitle={workspace.detail?.title ?? ""}
             onExport={workspace.handleExportDownload}
           />
 

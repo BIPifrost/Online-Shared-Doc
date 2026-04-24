@@ -1,10 +1,12 @@
+import { useState, type FormEvent } from "react";
 import type { ExportFormat } from "../../api";
 
 type ExportPanelProps = {
   isOpen: boolean;
   exportingFormat: ExportFormat | null;
   exportError: string;
-  onExport: (format: ExportFormat) => void;
+  currentTitle: string;
+  onExport: (format: ExportFormat, exportFileName?: string) => void;
 };
 
 const EXPORT_OPTIONS: Array<{
@@ -14,18 +16,18 @@ const EXPORT_OPTIONS: Array<{
 }> = [
   {
     format: "markdown",
-    title: "Export Markdown",
-    description: "Download the latest Markdown source as an .md file."
+    title: "导出 Markdown",
+    description: "下载最新的 Markdown 源代码为 .md 文件。"
   },
   {
     format: "html",
-    title: "Export HTML",
-    description: "Render the latest content into a basic HTML document."
+    title: "导出 HTML",
+    description: "将最新内容渲染为基本 HTML 文档。"
   },
   {
     format: "txt",
-    title: "Export TXT",
-    description: "Download the latest content as plain text."
+    title: "导出 TXT",
+    description: "下载最新内容为纯文本。"
   }
 ];
 
@@ -33,10 +35,18 @@ export function ExportPanel({
   isOpen,
   exportingFormat,
   exportError,
+  currentTitle,
   onExport
 }: ExportPanelProps) {
+  const [exportFileName, setExportFileName] = useState(currentTitle);
+
   if (!isOpen) {
     return null;
+  }
+
+  function handleSubmit(format: ExportFormat, event?: FormEvent) {
+    event?.preventDefault();
+    onExport(format, exportFileName.trim() || undefined);
   }
 
   return (
@@ -46,11 +56,20 @@ export function ExportPanel({
     >
       <div className="workspace-panel__header">
         <div>
-          <p className="workspace-panel__eyebrow">Export</p>
-          <h2>Export Panel</h2>
+          <p className="workspace-panel__eyebrow">导出</p>
+          <h2>导出面板</h2>
         </div>
-        <span className="workspace-panel__meta">3 formats</span>
+        <span className="workspace-panel__meta">3 种格式</span>
       </div>
+
+      <label className="field">
+        <span className="field__label">导出文件名（可选）</span>
+        <input
+          value={exportFileName}
+          onChange={(event) => setExportFileName(event.target.value)}
+          placeholder="留空则使用文档标题"
+        />
+      </label>
 
       <div className="export-option-list">
         {EXPORT_OPTIONS.map((option) => {
@@ -66,9 +85,9 @@ export function ExportPanel({
                 type="button"
                 className="toolbar-button toolbar-button--primary"
                 disabled={Boolean(exportingFormat)}
-                onClick={() => onExport(option.format)}
+                onClick={(event) => handleSubmit(option.format, event)}
               >
-                {isExporting ? "Exporting..." : "Start Export"}
+                {isExporting ? "导出中..." : "开始导出"}
               </button>
             </article>
           );
@@ -77,7 +96,7 @@ export function ExportPanel({
 
       {exportError ? (
         <div className="workspace-feedback workspace-feedback--error">
-          <strong>Export failed</strong>
+          <strong>导出失败</strong>
           <p>{exportError}</p>
         </div>
       ) : null}

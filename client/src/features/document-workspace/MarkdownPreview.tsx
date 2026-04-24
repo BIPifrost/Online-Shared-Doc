@@ -14,8 +14,8 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
   if (!content.trim()) {
     return (
       <div className="markdown-preview__empty">
-        <strong>Preview is ready</strong>
-        <p>Start typing Markdown in the editor and the rendered result will appear here.</p>
+        <strong>预览已就绪</strong>
+        <p>在编辑器中输入 Markdown 内容，渲染结果将显示在此处。</p>
       </div>
     );
   }

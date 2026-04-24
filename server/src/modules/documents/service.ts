@@ -33,11 +33,12 @@ function emptyState(docId: string, updatedAt: string): DocumentState {
 
 export function createDocumentService() {
   return {
-    createDocument(name: string) {
+    createDocument(name: string, title?: string) {
       const dataAccess = getDataAccess();
       const now = new Date().toISOString();
       const document = dataAccess.documents.createDocument({
         createdByName: name,
+        title,
         now
       });
 
@@ -115,6 +116,23 @@ export function createDocumentService() {
         snapshot,
         stateRevision: savedState.stateRevision,
         title: nextTitle,
+        updatedAt: now
+      };
+    },
+    updateDocumentTitle(docId: string, title: string) {
+      const dataAccess = getDataAccess();
+      const document = dataAccess.documents.getDocumentById(docId);
+
+      if (!document || document.isDeleted) {
+        throw new HttpError(404, "文档未找到。");
+      }
+
+      const now = new Date().toISOString();
+      dataAccess.documents.updateDocumentMeta(docId, title, now);
+
+      return {
+        id: docId,
+        title,
         updatedAt: now
       };
     }

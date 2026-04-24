@@ -1,4 +1,4 @@
-export const HOME_PAGE_TITLE = "Online Shared Document Workspace";
+export const HOME_PAGE_TITLE = "在线共享文档工作区";
 export const GUEST_NAME_STORAGE_KEY = "online-shared-doc.guest-name";
 
 function normalizeValue(value: string | null | undefined) {
@@ -16,7 +16,7 @@ export function validateGuestName(name: string) {
   const normalizedName = normalizeValue(name);
 
   if (!normalizedName) {
-    throw new Error("Guest name cannot be empty.");
+    throw new Error("昵称不能为空。");
   }
 
   return normalizedName;
@@ -26,7 +26,7 @@ export function validateDocIdInput(docId: string) {
   const normalizedDocId = normalizeValue(docId);
 
   if (!normalizedDocId) {
-    throw new Error("Document ID cannot be empty.");
+    throw new Error("文档 ID 不能为空。");
   }
 
   return normalizedDocId;
@@ -43,7 +43,7 @@ export function buildDocumentUrl(docId: string, guestName: string) {
 
 export function getReadableErrorMessage(
   error: unknown,
-  fallback = "The operation failed. Please try again."
+  fallback = "操作失败，请重试。"
 ) {
   if (error instanceof Error && error.message.trim()) {
     return error.message;

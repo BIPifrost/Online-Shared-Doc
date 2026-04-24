@@ -6,7 +6,8 @@ export {
   getDocumentDiff,
   getDocumentSnapshotDetail,
   getDocumentSnapshots,
-  saveDocumentSnapshot
+  saveDocumentSnapshot,
+  updateDocumentTitle
 } from "./documents";
 export type {
   ChatMessage,

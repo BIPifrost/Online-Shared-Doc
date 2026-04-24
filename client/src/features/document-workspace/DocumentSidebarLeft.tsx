@@ -36,10 +36,10 @@ export function DocumentSidebarLeft({
       <section className="workspace-panel">
         <div className="workspace-panel__header">
           <div>
-            <p className="workspace-panel__eyebrow">Collaborators</p>
-            <h2>Online Users</h2>
+            <p className="workspace-panel__eyebrow">协作者</p>
+            <h2>在线用户</h2>
           </div>
-          <span className="workspace-panel__meta">{users.length} users</span>
+          <span className="workspace-panel__meta">{users.length} 人</span>
         </div>
 
         <div className="presence-list">
@@ -59,18 +59,18 @@ export function DocumentSidebarLeft({
                   />
                   <div className="presence-card__body">
                     <strong>{user.name}</strong>
-                    <span>{current ? "Current user" : "Remote collaborator"}</span>
+                    <span>{current ? "当前用户" : "远程协作者"}</span>
                   </div>
                   <span className="presence-card__state">
-                    {user.online ? "online" : "offline"}
+                    {user.online ? "在线" : "离线"}
                   </span>
                 </article>
               );
             })
           ) : (
             <div className="workspace-empty">
-              <strong>Collaborator list is ready</strong>
-              <p>This area shows active users and their editor colors.</p>
+              <strong>协作者列表已就绪</strong>
+              <p>此区域显示活跃用户及其编辑器颜色。</p>
             </div>
           )}
         </div>
@@ -79,14 +79,14 @@ export function DocumentSidebarLeft({
       <section className="workspace-panel" id="document-history-panel">
         <div className="workspace-panel__header">
           <div>
-            <p className="workspace-panel__eyebrow">History</p>
-            <h2>Snapshots</h2>
+            <p className="workspace-panel__eyebrow">历史</p>
+            <h2>快照</h2>
           </div>
-          <span className="workspace-panel__meta">{snapshots.length} items</span>
+          <span className="workspace-panel__meta">{snapshots.length} 项</span>
         </div>
 
         <div className="workspace-selection-hint">
-          Select 1 snapshot to view details, or 2 snapshots to compare differences.
+          选择 1 个快照查看详情，或选择 2 个快照比较差异。
         </div>
 
         <div className="snapshot-list">
@@ -105,9 +105,9 @@ export function DocumentSidebarLeft({
                 >
                   <div className="snapshot-card__header">
                     <strong>v{snapshot.snapshotVersion}</strong>
-                    <span>{selected ? "selected" : "click to select"}</span>
+                    <span>{selected ? "已选中" : "点击选择"}</span>
                   </div>
-                  <span>Saved by: {snapshot.savedByName}</span>
+                  <span>保存者: {snapshot.savedByName}</span>
                   <time dateTime={snapshot.savedAt}>
                     {formatDateTime(snapshot.savedAt)}
                   </time>
@@ -116,8 +116,8 @@ export function DocumentSidebarLeft({
             })
           ) : (
             <div className="workspace-empty">
-              <strong>No manual snapshots yet</strong>
-              <p>Snapshots are created only when the Save button is pressed.</p>
+              <strong>暂无手动快照</strong>
+              <p>只有点击保存按钮时才会创建快照。</p>
             </div>
           )}
         </div>

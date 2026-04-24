@@ -120,7 +120,7 @@ async function readBlobResponse(response: Response, fallbackMessage: string) {
   };
 }
 
-export async function createDocument(name: string) {
+export async function createDocument(name: string, title?: string) {
   const guestName = validateGuestName(name);
 
   try {
@@ -130,14 +130,15 @@ export async function createDocument(name: string) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        name: guestName
+        name: guestName,
+        title: title?.trim() || undefined
       })
     });
 
     return await readJson<DocumentSummary>(response);
   } catch (error) {
     throw new Error(
-      getReadableErrorMessage(error, "Failed to create the document. Please try again.")
+      getReadableErrorMessage(error, "创建文档失败，请重试。")
     );
   }
 }
@@ -233,14 +234,16 @@ export async function downloadDocumentExport(input: {
   docId: string;
   format: ExportFormat;
   fallbackTitle: string;
+  exportFileName?: string;
 }) {
   const normalizedDocId = validateDocIdInput(input.docId);
+  const exportTitle = input.exportFileName ?? input.fallbackTitle;
   const response = await fetch(
-    `/api/documents/${encodeURIComponent(normalizedDocId)}/export?format=${input.format}`
+    `/api/documents/${encodeURIComponent(normalizedDocId)}/export?format=${input.format}&title=${encodeURIComponent(exportTitle)}`
   );
   const file = await readBlobResponse(
     response,
-    "Export failed. Please try again."
+    "导出失败，请重试。"
   );
   const fallbackExtension = input.format === "markdown" ? "md" : input.format;
   const fileName =
@@ -261,4 +264,25 @@ export async function downloadDocumentExport(input: {
   return {
     fileName
   };
+}
+
+export async function updateDocumentTitle(input: {
+  docId: string;
+  title: string;
+}) {
+  const normalizedDocId = validateDocIdInput(input.docId);
+  const response = await fetch(
+    `/api/documents/${encodeURIComponent(normalizedDocId)}/title`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: input.title
+      })
+    }
+  );
+
+  return await readJson<{ id: string; title: string; updatedAt: string }>(response);
 }

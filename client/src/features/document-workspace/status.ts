@@ -21,22 +21,22 @@ export function formatDateTime(value: string) {
 export function getConnectionStatusMeta(status: ConnectionStatus) {
   switch (status) {
     case "connected":
-      return { label: "Connected", tone: "success" as const };
+      return { label: "已连接", tone: "success" as const };
     case "disconnected":
-      return { label: "Disconnected", tone: "error" as const };
+      return { label: "已断开", tone: "error" as const };
     default:
-      return { label: "Connecting", tone: "warning" as const };
+      return { label: "连接中", tone: "warning" as const };
   }
 }
 
 export function getSaveStatusMeta(status: WorkspaceSaveStatus) {
   switch (status) {
     case "saving":
-      return { label: "Saving", tone: "warning" as const };
+      return { label: "保存中", tone: "warning" as const };
     case "unsaved":
-      return { label: "Unsaved", tone: "info" as const };
+      return { label: "未保存", tone: "info" as const };
     default:
-      return { label: "Saved", tone: "success" as const };
+      return { label: "已保存", tone: "success" as const };
   }
 }
 
@@ -47,45 +47,45 @@ export function getEditorActivityLabel(input: {
   isSynced: boolean;
 }) {
   if (input.loadState === "loading") {
-    return "Loading the workspace and preparing collaboration.";
+    return "正在加载工作区并准备协作环境。";
   }
 
   if (input.loadState === "error") {
-    return "The document could not be loaded.";
+    return "文档加载失败。";
   }
 
   if (input.connectionStatus === "disconnected") {
-    return "Connection lost. Automatic reconnect is in progress.";
+    return "连接已断开，正在自动重连。";
   }
 
   if (input.connectionStatus === "connecting") {
-    return "Connecting to collaboration services.";
+    return "正在连接到协作服务。";
   }
 
   if (input.saveStatus === "saving") {
-    return "Saving the current document state.";
+    return "正在保存当前文档状态。";
   }
 
   if (input.saveStatus === "unsaved") {
-    return "Changes are present but no new snapshot has been created yet.";
+    return "存在更改但尚未创建新的快照。";
   }
 
   if (!input.isSynced) {
-    return "Connected. Waiting for the latest Yjs state to finish syncing.";
+    return "已连接，等待最新的 Yjs 状态同步完成。";
   }
 
-  return "Workspace is ready for editing, history review, and export.";
+  return "工作区已就绪，可以进行编辑、历史查看和导出操作。";
 }
 
 export function getMessageToneLabel(tone: WorkspaceSystemMessageTone) {
   switch (tone) {
     case "error":
-      return "Error";
+      return "错误";
     case "warning":
-      return "Warning";
+      return "警告";
     case "success":
-      return "Success";
+      return "成功";
     default:
-      return "System";
+      return "系统";
   }
 }

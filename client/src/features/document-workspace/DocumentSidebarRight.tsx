@@ -30,10 +30,10 @@ export function DocumentSidebarRight({
       <section className="workspace-panel">
         <div className="workspace-panel__header">
           <div>
-            <p className="workspace-panel__eyebrow">Chat</p>
-            <h2>Chat Panel</h2>
+            <p className="workspace-panel__eyebrow">聊天</p>
+            <h2>聊天面板</h2>
           </div>
-          <span className="workspace-panel__meta">{chatMessages.length} items</span>
+          <span className="workspace-panel__meta">{chatMessages.length} 条</span>
         </div>
 
         <div className="message-list">
@@ -49,22 +49,22 @@ export function DocumentSidebarRight({
             ))
           ) : (
             <div className="workspace-empty">
-              <strong>Chat is ready</strong>
-              <p>The first message sent here will appear to other collaborators in realtime.</p>
+              <strong>聊天已就绪</strong>
+              <p>在此发送的第一条消息将实时显示给其他协作者。</p>
             </div>
           )}
         </div>
 
         <form className="chat-composer" onSubmit={handleSubmit}>
           <label className="chat-composer__label" htmlFor="workspace-chat-input">
-            Chat message
+            聊天消息
           </label>
           <textarea
             id="workspace-chat-input"
             className="chat-composer__input"
             value={chatDraft}
             onChange={(event) => onChatDraftChange(event.target.value)}
-            placeholder="Press Enter to send. Use Shift + Enter for a new line."
+            placeholder="按 Enter 发送，Shift + Enter 换行。"
             rows={3}
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
@@ -74,13 +74,13 @@ export function DocumentSidebarRight({
             }}
           />
           <div className="chat-composer__footer">
-            <span>Only the latest 50 chat messages are kept in the panel.</span>
+            <span>仅保留最近 50 条聊天消息。</span>
             <button
               type="submit"
               className="toolbar-button toolbar-button--primary"
               disabled={!canSendChat}
             >
-              Send
+              发送
             </button>
           </div>
         </form>
@@ -89,10 +89,10 @@ export function DocumentSidebarRight({
       <section className="workspace-panel">
         <div className="workspace-panel__header">
           <div>
-            <p className="workspace-panel__eyebrow">System</p>
-            <h2>System Messages</h2>
+            <p className="workspace-panel__eyebrow">系统</p>
+            <h2>系统消息</h2>
           </div>
-          <span className="workspace-panel__meta">{systemMessages.length} items</span>
+          <span className="workspace-panel__meta">{systemMessages.length} 条</span>
         </div>
 
         <div className="system-message-list">
@@ -113,8 +113,8 @@ export function DocumentSidebarRight({
             ))
           ) : (
             <div className="workspace-empty">
-              <strong>System area is ready</strong>
-              <p>Connection, save, and reconnect notices will appear here.</p>
+              <strong>系统区域已就绪</strong>
+              <p>连接、保存和重连通知将显示在此处。</p>
             </div>
           )}
         </div>

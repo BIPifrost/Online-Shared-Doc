@@ -8,6 +8,7 @@ import {
   getDocumentSnapshotDetail,
   getDocumentSnapshots,
   saveDocumentSnapshot,
+  updateDocumentTitle,
   type ChatMessage,
   type DocumentDetail,
   type DocumentDiffResult,
@@ -614,7 +615,7 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
     setExportError("");
   }
 
-  async function handleExportDownload(format: ExportFormat) {
+  async function handleExportDownload(format: ExportFormat, exportFileName?: string) {
     const fallbackTitle = detail?.title?.trim() || docId;
 
     setExportError("");
@@ -624,19 +625,20 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
       const result = await downloadDocumentExport({
         docId,
         format,
-        fallbackTitle
+        fallbackTitle,
+        exportFileName
       });
 
       setSystemMessages((previous) =>
         appendUniqueSystemMessage(
           previous,
-          createSystemMessage(`Export succeeded: ${result.fileName}`, "success")
+          createSystemMessage(`导出成功: ${result.fileName}`, "success")
         )
       );
     } catch (error) {
       const message = getReadableErrorMessage(
         error,
-        "Export failed. Please try again."
+        "导出失败，请重试。"
       );
       setExportError(message);
       setSystemMessages((previous) =>
@@ -718,6 +720,40 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
     setChatDraft("");
   }
 
+  async function handleTitleUpdate(newTitle: string) {
+    try {
+      const result = await updateDocumentTitle({
+        docId,
+        title: newTitle
+      });
+
+      setDetail((previous) =>
+        previous
+          ? {
+              ...previous,
+              title: result.title,
+              updatedAt: result.updatedAt
+            }
+          : previous
+      );
+
+      setSystemMessages((previous) =>
+        appendUniqueSystemMessage(
+          previous,
+          createSystemMessage(`文档标题已更新为: ${result.title}`, "success")
+        )
+      );
+    } catch (error) {
+      const message = getReadableErrorMessage(
+        error,
+        "更新标题失败，请重试。"
+      );
+      setSystemMessages((previous) =>
+        appendUniqueSystemMessage(previous, createSystemMessage(message, "error"))
+      );
+    }
+  }
+
   const visibleUsers =
     presenceUsers.length > 0
       ? presenceUsers
@@ -774,6 +810,7 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
     handleExportDownload,
     handleSave,
     handleSnapshotToggle,
-    handleClearSnapshotSelection
+    handleClearSnapshotSelection,
+    handleTitleUpdate
   };
 }

@@ -45,11 +45,11 @@ export function DocumentHistoryPanel({
     <section className="workspace-panel workspace-panel--history-detail">
       <div className="workspace-panel__header">
         <div>
-          <p className="workspace-panel__eyebrow">Version Compare</p>
-          <h2>Snapshot Detail and Diff</h2>
+          <p className="workspace-panel__eyebrow">版本比较</p>
+          <h2>快照详情与差异</h2>
         </div>
         <span className="workspace-panel__meta">
-          Selected {selectedSnapshotIds.length} / 2
+          已选择 {selectedSnapshotIds.length} / 2
         </span>
       </div>
 
@@ -63,7 +63,7 @@ export function DocumentHistoryPanel({
             ))
           ) : (
             <span className="history-selection-bar__hint">
-              Pick one snapshot for detail view or two snapshots for highlighted diff output.
+              选择一个快照查看详情，或选择两个快照进行差异对比。
             </span>
           )}
         </div>
@@ -73,15 +73,15 @@ export function DocumentHistoryPanel({
             className="toolbar-button"
             onClick={onClearSelection}
           >
-            Clear Selection
+            清除选择
           </button>
         ) : null}
       </div>
 
       {selectedSnapshotIds.length === 0 ? (
         <div className="workspace-empty">
-          <strong>History panel is ready</strong>
-          <p>Save the document to create snapshots, then inspect one or compare two.</p>
+          <strong>历史面板已就绪</strong>
+          <p>保存文档以创建快照，然后可以查看一个或比较两个快照。</p>
         </div>
       ) : null}
 
@@ -89,14 +89,14 @@ export function DocumentHistoryPanel({
         <>
           {snapshotDetailState === "loading" ? (
             <div className="workspace-feedback">
-              <strong>Loading snapshot detail</strong>
-              <p>The selected snapshot content is being fetched.</p>
+              <strong>正在加载快照详情</strong>
+              <p>正在获取选定的快照内容。</p>
             </div>
           ) : null}
 
           {snapshotDetailState === "error" ? (
             <div className="workspace-feedback workspace-feedback--error">
-              <strong>Snapshot detail failed to load</strong>
+              <strong>快照详情加载失败</strong>
               <p>{snapshotDetailError}</p>
             </div>
           ) : null}
@@ -109,7 +109,7 @@ export function DocumentHistoryPanel({
                   <span>{snapshotDetail.title}</span>
                 </div>
                 <div className="history-detail-card__meta">
-                  <span>Saved by: {snapshotDetail.savedByName}</span>
+                  <span>保存者: {snapshotDetail.savedByName}</span>
                   <time dateTime={snapshotDetail.savedAt}>
                     {formatDateTime(snapshotDetail.savedAt)}
                   </time>
@@ -127,14 +127,14 @@ export function DocumentHistoryPanel({
         <>
           {diffState === "loading" ? (
             <div className="workspace-feedback">
-              <strong>Loading version diff</strong>
-              <p>The two selected snapshots are being compared.</p>
+              <strong>正在加载版本差异</strong>
+              <p>正在比较选定的两个快照。</p>
             </div>
           ) : null}
 
           {diffState === "error" ? (
             <div className="workspace-feedback workspace-feedback--error">
-              <strong>Version diff failed to load</strong>
+              <strong>版本差异加载失败</strong>
               <p>{diffError}</p>
             </div>
           ) : null}
@@ -143,13 +143,13 @@ export function DocumentHistoryPanel({
             <div className="diff-viewer">
               <div className="diff-viewer__summary">
                 <strong>
-                  v{diffResult.fromSnapshot.snapshotVersion} compared with v
-                  {diffResult.toSnapshot.snapshotVersion}
+                  v{diffResult.fromSnapshot.snapshotVersion} 与 v
+                  {diffResult.toSnapshot.snapshotVersion} 对比
                 </strong>
                 <p>{diffResult.diffTextSummary}</p>
               </div>
               <iframe
-                title="Snapshot diff preview"
+                title="快照差异预览"
                 className="diff-viewer__frame"
                 sandbox=""
                 srcDoc={diffResult.diffHtml}

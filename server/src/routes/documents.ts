@@ -10,6 +10,7 @@ import {
   validateDocId,
   validateExportFormat,
   validateName,
+  validateOptionalTitle,
   validateSnapshotId,
   validateTitle
 } from "../services/validation.js";
@@ -59,7 +60,8 @@ export function registerDocumentRoutes(app: Express) {
   app.post("/api/documents", (request: Request, response: Response) => {
     try {
       const name = validateName(request.body?.name);
-      const result = documentService.createDocument(name);
+      const title = validateOptionalTitle(request.body?.title);
+      const result = documentService.createDocument(name, title);
       return sendSuccess(response, 201, result);
     } catch (error) {
       return handleRouteError(response, error, {
@@ -117,6 +119,20 @@ export function registerDocumentRoutes(app: Express) {
     } catch (error) {
       return handleRouteError(response, error, {
         path: "POST /api/documents/:docId/save",
+        docId: request.params.docId
+      });
+    }
+  });
+
+  app.put("/api/documents/:docId/title", (request: Request, response: Response) => {
+    try {
+      const docId = validateDocId(request.params.docId);
+      const title = validateTitle(request.body?.title);
+      const result = documentService.updateDocumentTitle(docId, title);
+      return sendSuccess(response, 200, result);
+    } catch (error) {
+      return handleRouteError(response, error, {
+        path: "PUT /api/documents/:docId/title",
         docId: request.params.docId
       });
     }
@@ -201,17 +217,21 @@ export function registerDocumentRoutes(app: Express) {
     try {
       const docId = validateDocId(request.params.docId);
       const format = validateExportFormat(request.query.format);
+      const exportTitle =
+        typeof request.query.title === "string"
+          ? request.query.title
+          : undefined;
       const detail = documentService.getDocumentDetail(docId);
       const exported = buildExportDocument(
         format,
-        detail.document.title,
+        exportTitle ?? detail.document.title,
         detail.content
       );
 
       response.setHeader("Content-Type", exported.contentType);
       response.setHeader(
         "Content-Disposition",
-        buildContentDisposition(detail.document.title, exported.extension)
+        buildContentDisposition(exportTitle ?? detail.document.title, exported.extension)
       );
 
       return response.status(200).send(exported.content);

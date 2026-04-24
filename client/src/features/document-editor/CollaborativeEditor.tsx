@@ -143,10 +143,10 @@ export function CollaborativeEditor({
     <section className={`collaborative-editor ${className ?? ""}`.trim()}>
       <header className="collaborative-editor__status">
         <span className="collaborative-editor__badge">
-          Socket: {connectionStatus}
+          Socket: {connectionStatus === "connected" ? "已连接" : connectionStatus === "connecting" ? "连接中" : "已断开"}
         </span>
         <span className="collaborative-editor__badge">
-          Yjs: {isSynced ? "synced" : "syncing"}
+          Yjs: {isSynced ? "已同步" : "同步中"}
         </span>
       </header>
       <div className="collaborative-editor__surface" ref={editorHostRef} />

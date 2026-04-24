@@ -17,6 +17,24 @@ function requireTrimmedText(value: unknown, fieldName: string) {
   return trimmed;
 }
 
+function optionalTrimmedText(value: unknown) {
+  if (value === undefined || value === null) {
+    return undefined;
+  }
+
+  if (typeof value !== "string") {
+    throw new HttpError(400, "必须提供有效的文本。");
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return undefined;
+  }
+
+  return trimmed;
+}
+
 export function validateName(value: unknown) {
   return requireTrimmedText(value, "name");
 }
@@ -27,6 +45,10 @@ export function validateDocId(value: unknown) {
 
 export function validateTitle(value: unknown) {
   return requireTrimmedText(value, "title");
+}
+
+export function validateOptionalTitle(value: unknown) {
+  return optionalTrimmedText(value);
 }
 
 export function validateSnapshotId(value: unknown) {
