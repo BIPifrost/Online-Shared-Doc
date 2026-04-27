@@ -15,9 +15,17 @@ type DocumentToolbarProps = {
   onlineCount: number;
   latestUpdatedAt: string;
   isExportPanelOpen: boolean;
+  leftPanelOpen: boolean;
+  rightPanelOpen: boolean;
+  editorFullscreen: boolean;
+  previewFullscreen: boolean;
   onSave: () => void;
   onExportClick: () => void;
   onHistoryClick: () => void;
+  onToggleLeftPanel: () => void;
+  onToggleRightPanel: () => void;
+  onToggleEditorFullscreen: () => void;
+  onTogglePreviewFullscreen: () => void;
   onTitleUpdate?: (newTitle: string) => void;
 };
 
@@ -30,9 +38,17 @@ export function DocumentToolbar({
   onlineCount,
   latestUpdatedAt,
   isExportPanelOpen,
+  leftPanelOpen,
+  rightPanelOpen,
+  editorFullscreen: _editorFullscreen,
+  previewFullscreen: _previewFullscreen,
   onSave,
   onExportClick,
   onHistoryClick,
+  onToggleLeftPanel,
+  onToggleRightPanel,
+  onToggleEditorFullscreen: _onToggleEditorFullscreen,
+  onTogglePreviewFullscreen: _onTogglePreviewFullscreen,
   onTitleUpdate
 }: DocumentToolbarProps) {
   const connectionMeta = getConnectionStatusMeta(connectionStatus);
@@ -176,6 +192,24 @@ export function DocumentToolbar({
       </div>
 
       <div className="workspace-toolbar__actions">
+        <button
+          type="button"
+          className={`toolbar-button${leftPanelOpen ? " toolbar-button--active" : ""}`}
+          onClick={onToggleLeftPanel}
+          disabled={disabled || _editorFullscreen || _previewFullscreen}
+          title="协作者和快照列表"
+        >
+          {leftPanelOpen ? "隐藏侧边栏" : "显示侧边栏"}
+        </button>
+        <button
+          type="button"
+          className={`toolbar-button${rightPanelOpen ? " toolbar-button--active" : ""}`}
+          onClick={onToggleRightPanel}
+          disabled={disabled || _editorFullscreen || _previewFullscreen}
+          title="聊天和系统消息"
+        >
+          {rightPanelOpen ? "隐藏面板" : "显示面板"}
+        </button>
         <button
           type="button"
           className="toolbar-button toolbar-button--primary"

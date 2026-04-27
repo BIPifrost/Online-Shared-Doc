@@ -216,6 +216,13 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatDraft, setChatDraft] = useState("");
   const [systemMessages, setSystemMessages] = useState<WorkspaceSystemMessage[]>([]);
+  
+  // 布局状态管理
+  const [leftPanelOpen, setLeftPanelOpen] = useState(false);
+  const [rightPanelOpen, setRightPanelOpen] = useState(false);
+  const [editorFullscreen, setEditorFullscreen] = useState(false);
+  const [previewFullscreen, setPreviewFullscreen] = useState(false);
+  const [splitRatio, setSplitRatio] = useState(50); // 左右分栏比例 (0-100)
 
   const contentRef = useRef("");
   const lastSavedContentRef = useRef("");
@@ -269,6 +276,11 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
     setChatMessages([]);
     setChatDraft("");
     setSystemMessages([]);
+    setLeftPanelOpen(false);
+    setRightPanelOpen(false);
+    setEditorFullscreen(false);
+    setPreviewFullscreen(false);
+    setSplitRatio(50);
     contentRef.current = "";
     lastSavedContentRef.current = "";
     lastLocalSavedVersionRef.current = null;
@@ -754,6 +766,41 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
     }
   }
 
+  // 布局控制函数
+  function toggleLeftPanel() {
+    setLeftPanelOpen((prev) => !prev);
+    if (editorFullscreen || previewFullscreen) {
+      setEditorFullscreen(false);
+      setPreviewFullscreen(false);
+    }
+  }
+
+  function toggleRightPanel() {
+    setRightPanelOpen((prev) => !prev);
+    if (editorFullscreen || previewFullscreen) {
+      setEditorFullscreen(false);
+      setPreviewFullscreen(false);
+    }
+  }
+
+  function toggleEditorFullscreen() {
+    setEditorFullscreen((prev) => !prev);
+    if (!editorFullscreen) {
+      setPreviewFullscreen(false);
+    }
+  }
+
+  function togglePreviewFullscreen() {
+    setPreviewFullscreen((prev) => !prev);
+    if (!previewFullscreen) {
+      setEditorFullscreen(false);
+    }
+  }
+
+  function handleSplitRatioChange(newRatio: number) {
+    setSplitRatio(Math.max(20, Math.min(80, newRatio)));
+  }
+
   const visibleUsers =
     presenceUsers.length > 0
       ? presenceUsers
@@ -801,6 +848,18 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
       isSynced
     }),
     onlineCount: visibleUsers.filter((user) => user.online).length,
+    // 布局状态
+    leftPanelOpen,
+    rightPanelOpen,
+    editorFullscreen,
+    previewFullscreen,
+    splitRatio,
+    // 布局控制函数
+    toggleLeftPanel,
+    toggleRightPanel,
+    toggleEditorFullscreen,
+    togglePreviewFullscreen,
+    handleSplitRatioChange,
     handleEditorConnectionChange,
     handleEditorContentChange,
     handleEditorSyncChange,

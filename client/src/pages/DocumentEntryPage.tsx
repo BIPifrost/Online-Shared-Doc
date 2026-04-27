@@ -5,6 +5,8 @@ import { DocumentSidebarLeft } from "../features/document-workspace/DocumentSide
 import { DocumentSidebarRight } from "../features/document-workspace/DocumentSidebarRight";
 import { MarkdownPreview } from "../features/document-workspace/MarkdownPreview";
 import { DocumentToolbar } from "../features/document-workspace/DocumentToolbar";
+import { ResizableSplitPane } from "../features/document-workspace/ResizableSplitPane";
+import { SidebarDrawer } from "../features/document-workspace/SidebarDrawer";
 import { formatDateTime } from "../features/document-workspace/status";
 import { useDocumentWorkspace } from "../features/document-workspace/useDocumentWorkspace";
 import { ExportPanel } from "../features/export-panel";
@@ -37,7 +39,7 @@ export function DocumentEntryPage() {
   }
 
   return (
-    <main className="workspace-shell">
+    <main className="workspace-shell workspace-shell--immersive">
       <DocumentToolbar
         title={toolbarTitle}
         docId={workspace.docId}
@@ -51,62 +53,102 @@ export function DocumentEntryPage() {
             : "等待同步"
         }
         isExportPanelOpen={workspace.isExportPanelOpen}
+        leftPanelOpen={workspace.leftPanelOpen}
+        rightPanelOpen={workspace.rightPanelOpen}
+        editorFullscreen={workspace.editorFullscreen}
+        previewFullscreen={workspace.previewFullscreen}
         onSave={workspace.handleSave}
         onExportClick={workspace.handleExportClick}
         onHistoryClick={handleHistoryClick}
+        onToggleLeftPanel={workspace.toggleLeftPanel}
+        onToggleRightPanel={workspace.toggleRightPanel}
+        onToggleEditorFullscreen={workspace.toggleEditorFullscreen}
+        onTogglePreviewFullscreen={workspace.togglePreviewFullscreen}
         onTitleUpdate={workspace.handleTitleUpdate}
       />
 
-      <section className="workspace-layout">
-        <DocumentSidebarLeft
-          guestName={workspace.guestName}
-          currentSocketId={workspace.currentSocketId}
-          users={workspace.presenceUsers}
-          snapshots={workspace.snapshots}
-          selectedSnapshotIds={workspace.selectedSnapshotIds}
-          onSnapshotToggle={workspace.handleSnapshotToggle}
-        />
+      <section className="workspace-layout workspace-layout--immersive">
+        {/* 左侧抽屉 - 协作者和快照 */}
+        <SidebarDrawer
+          isOpen={workspace.leftPanelOpen}
+          position="left"
+          onClose={workspace.toggleLeftPanel}
+          width="320px"
+        >
+          <DocumentSidebarLeft
+            guestName={workspace.guestName}
+            currentSocketId={workspace.currentSocketId}
+            users={workspace.presenceUsers}
+            snapshots={workspace.snapshots}
+            selectedSnapshotIds={workspace.selectedSnapshotIds}
+            onSnapshotToggle={workspace.handleSnapshotToggle}
+          />
+        </SidebarDrawer>
 
-        <section className="workspace-main">
-          <div className="workspace-main__split">
-            <div className="workspace-panel workspace-panel--editor">
-              <div className="workspace-panel__header workspace-panel__header--main">
-                <div>
-                  <p className="workspace-panel__eyebrow">编辑器</p>
-                  <h2>Markdown 输入</h2>
-                </div>
-                <div className="workspace-main__meta">
-                  <span>当前用户: {workspace.guestName}</span>
-                  <span>状态: {workspace.latestActivityLabel}</span>
-                </div>
-              </div>
+        {/* 右侧抽屉 - 聊天和系统消息 */}
+        <SidebarDrawer
+          isOpen={workspace.rightPanelOpen}
+          position="right"
+          onClose={workspace.toggleRightPanel}
+          width="400px"
+        >
+          <DocumentSidebarRight
+            chatMessages={workspace.chatMessages}
+            chatDraft={workspace.chatDraft}
+            canSendChat={workspace.canSendChat}
+            onChatDraftChange={workspace.handleChatDraftChange}
+            onChatSend={workspace.handleChatSend}
+            systemMessages={workspace.systemMessages}
+          />
+        </SidebarDrawer>
 
-              {workspace.loadState === "loading" ? (
-                <div className="workspace-feedback">
-                  <strong>加载中</strong>
-                  <p>正在获取文档数据并启动协同编辑器。</p>
-                </div>
-              ) : null}
+        {/* 主编辑区 - 双栏沉浸式布局 */}
+        <section className="workspace-main workspace-main--immersive">
+          {workspace.loadState === "loading" ? (
+            <div className="workspace-feedback">
+              <strong>加载中</strong>
+              <p>正在获取文档数据并启动协同编辑器。</p>
+            </div>
+          ) : null}
 
-              {workspace.loadState === "error" ? (
-                <div className="workspace-feedback workspace-feedback--error">
-                  <strong>加载失败</strong>
-                  <p>{workspace.loadError}</p>
-                  <Link className="primary-link" to="/">
-                    返回首页
-                  </Link>
-                </div>
-              ) : null}
+          {workspace.loadState === "error" ? (
+            <div className="workspace-feedback workspace-feedback--error">
+              <strong>加载失败</strong>
+              <p>{workspace.loadError}</p>
+              <Link className="primary-link" to="/">
+                返回首页
+              </Link>
+            </div>
+          ) : null}
 
-              {workspace.detail && workspace.loadState === "ready" ? (
-                <>
-                  <div className="editor-status-banner">
-                    <span className="editor-status-banner__title">编辑器状态</span>
-                    <span>{workspace.latestActivityLabel}</span>
+          {workspace.detail && workspace.loadState === "ready" ? (
+            <ResizableSplitPane
+              leftContent={
+                <div className="immersive-editor-panel">
+                  <div className="immersive-panel-header">
+                    <div>
+                      <p className="immersive-panel__eyebrow">编辑器</p>
+                      <h2>Markdown 输入</h2>
+                    </div>
+                    <div className="immersive-panel-actions">
+                      <button
+                        type="button"
+                        className="immersive-action-button"
+                        onClick={workspace.toggleEditorFullscreen}
+                        title={workspace.editorFullscreen ? "退出全屏" : "全屏显示"}
+                      >
+                        {workspace.editorFullscreen ? "⊡" : "⊞"}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="immersive-editor-meta">
+                    <span>当前用户: {workspace.guestName}</span>
+                    <span>状态: {workspace.latestActivityLabel}</span>
                   </div>
 
                   <CollaborativeEditor
-                    className="workspace-editor"
+                    className="workspace-editor workspace-editor--immersive"
                     docId={workspace.docId}
                     userName={workspace.guestName}
                     userColor={editorUserColor}
@@ -114,21 +156,37 @@ export function DocumentEntryPage() {
                     onSyncStateChange={workspace.handleEditorSyncChange}
                     onContentChange={workspace.handleEditorContentChange}
                   />
-                </>
-              ) : null}
-            </div>
-
-            <section className="workspace-panel workspace-panel--preview workspace-panel--preview-main">
-              <div className="workspace-panel__header">
-                <div>
-                  <p className="workspace-panel__eyebrow">预览</p>
-                  <h2>Markdown 预览</h2>
                 </div>
-              </div>
-              <MarkdownPreview content={workspace.editorContent} />
-            </section>
-          </div>
+              }
+              rightContent={
+                <div className="immersive-preview-panel">
+                  <div className="immersive-panel-header">
+                    <div>
+                      <p className="immersive-panel__eyebrow">预览</p>
+                      <h2>Markdown 预览</h2>
+                    </div>
+                    <div className="immersive-panel-actions">
+                      <button
+                        type="button"
+                        className="immersive-action-button"
+                        onClick={workspace.togglePreviewFullscreen}
+                        title={workspace.previewFullscreen ? "退出全屏" : "全屏显示"}
+                      >
+                        {workspace.previewFullscreen ? "⊡" : "⊞"}
+                      </button>
+                    </div>
+                  </div>
+                  <MarkdownPreview content={workspace.editorContent} />
+                </div>
+              }
+              splitRatio={workspace.splitRatio}
+              onSplitRatioChange={workspace.handleSplitRatioChange}
+              leftFullscreen={workspace.editorFullscreen}
+              rightFullscreen={workspace.previewFullscreen}
+            />
+          ) : null}
 
+          {/* 导出面板和历史面板保持原位 */}
           <ExportPanel
             isOpen={workspace.isExportPanelOpen}
             exportingFormat={workspace.exportingFormat}
@@ -149,15 +207,6 @@ export function DocumentEntryPage() {
             onClearSelection={workspace.handleClearSnapshotSelection}
           />
         </section>
-
-        <DocumentSidebarRight
-          chatMessages={workspace.chatMessages}
-          chatDraft={workspace.chatDraft}
-          canSendChat={workspace.canSendChat}
-          onChatDraftChange={workspace.handleChatDraftChange}
-          onChatSend={workspace.handleChatSend}
-          systemMessages={workspace.systemMessages}
-        />
       </section>
     </main>
   );
