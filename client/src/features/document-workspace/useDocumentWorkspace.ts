@@ -223,7 +223,7 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
   const [editorFullscreen, setEditorFullscreen] = useState(false);
   const [previewFullscreen, setPreviewFullscreen] = useState(false);
   const [splitRatio, setSplitRatio] = useState(50); // 左右分栏比例 (0-100)
-
+  const [helpPanelOpen, setHelpPanelOpen] = useState(false);
   const contentRef = useRef("");
   const lastSavedContentRef = useRef("");
   const lastLocalSavedVersionRef = useRef<number | null>(null);
@@ -281,6 +281,7 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
     setEditorFullscreen(false);
     setPreviewFullscreen(false);
     setSplitRatio(50);
+    setHelpPanelOpen(false);
     contentRef.current = "";
     lastSavedContentRef.current = "";
     lastLocalSavedVersionRef.current = null;
@@ -801,6 +802,10 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
     setSplitRatio(Math.max(20, Math.min(80, newRatio)));
   }
 
+  function toggleHelpPanel() {
+    setHelpPanelOpen((prev) => !prev);
+  }
+
   const visibleUsers =
     presenceUsers.length > 0
       ? presenceUsers
@@ -854,12 +859,14 @@ export function useDocumentWorkspace(docId: string, queryName: string | null) {
     editorFullscreen,
     previewFullscreen,
     splitRatio,
+    helpPanelOpen,
     // 布局控制函数
     toggleLeftPanel,
     toggleRightPanel,
     toggleEditorFullscreen,
     togglePreviewFullscreen,
     handleSplitRatioChange,
+    toggleHelpPanel,
     handleEditorConnectionChange,
     handleEditorContentChange,
     handleEditorSyncChange,

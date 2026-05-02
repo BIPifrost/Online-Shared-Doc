@@ -19,6 +19,7 @@ type DocumentToolbarProps = {
   rightPanelOpen: boolean;
   editorFullscreen: boolean;
   previewFullscreen: boolean;
+  helpPanelOpen: boolean;
   onSave: () => void;
   onExportClick: () => void;
   onHistoryClick: () => void;
@@ -26,6 +27,7 @@ type DocumentToolbarProps = {
   onToggleRightPanel: () => void;
   onToggleEditorFullscreen: () => void;
   onTogglePreviewFullscreen: () => void;
+  onToggleHelpPanel: () => void;
   onTitleUpdate?: (newTitle: string) => void;
 };
 
@@ -42,6 +44,7 @@ export function DocumentToolbar({
   rightPanelOpen,
   editorFullscreen: _editorFullscreen,
   previewFullscreen: _previewFullscreen,
+  helpPanelOpen,
   onSave,
   onExportClick,
   onHistoryClick,
@@ -49,6 +52,7 @@ export function DocumentToolbar({
   onToggleRightPanel,
   onToggleEditorFullscreen: _onToggleEditorFullscreen,
   onTogglePreviewFullscreen: _onTogglePreviewFullscreen,
+  onToggleHelpPanel,
   onTitleUpdate
 }: DocumentToolbarProps) {
   const connectionMeta = getConnectionStatusMeta(connectionStatus);
@@ -209,6 +213,15 @@ export function DocumentToolbar({
           title="聊天和系统消息"
         >
           {rightPanelOpen ? "隐藏面板" : "显示面板"}
+        </button>
+        <button
+          type="button"
+          className={`toolbar-button${helpPanelOpen ? " toolbar-button--active" : ""}`}
+          onClick={onToggleHelpPanel}
+          disabled={disabled}
+          title="帮助文档 (Ctrl+/)"
+        >
+          {helpPanelOpen ? "隐藏帮助" : "帮助"}
         </button>
         <button
           type="button"
