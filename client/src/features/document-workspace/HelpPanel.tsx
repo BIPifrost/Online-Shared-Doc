@@ -138,7 +138,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
             onClick={onClose}
             aria-label="关闭"
           >
-            \u00d7
+            ×
           </button>
         </div>
 

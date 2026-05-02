@@ -1,13 +1,8 @@
-import type { ComponentPropsWithoutRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 type MarkdownPreviewProps = {
   content: string;
-};
-
-type CodeProps = ComponentPropsWithoutRef<"code"> & {
-  inline?: boolean;
 };
 
 export function MarkdownPreview({ content }: MarkdownPreviewProps) {
@@ -56,18 +51,18 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
             ol(props) {
               return <ol {...props} className="markdown-preview__list" />;
             },
-            li(props) {
-              const hasCheckbox = props.children && 
-                typeof props.children === 'object' && 
-                'props' in props.children &&
-                (props.children as any).props?.type === 'checkbox';
+            li({ children, ...props }: any) {
+              const hasCheckbox = children && 
+                typeof children === 'object' && 
+                'props' in children &&
+                (children as any).props?.type === 'checkbox';
               
               if (hasCheckbox) {
-                return <li {...props} className="markdown-preview__task-item" />;
+                return <li {...props} className="markdown-preview__task-item">{children}</li>;
               }
-              return <li {...props} />;
+              return <li {...props}>{children}</li>;
             },
-            input(props) {
+            input(props: any) {
               if (props.type === 'checkbox') {
                 return <input {...props} className="markdown-preview__task-checkbox" disabled />;
               }
@@ -76,8 +71,12 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
             hr(props) {
               return <hr {...props} className="markdown-preview__hr" />;
             },
-            a(props) {
-              return <a {...props} className="markdown-preview__link" target="_blank" rel="noopener noreferrer" />;
+            a({ children, ...props }: any) {
+              return (
+                <a {...props} className="markdown-preview__link" target="_blank" rel="noopener noreferrer">
+                  {children}
+                </a>
+              );
             },
             strong(props) {
               return <strong {...props} className="markdown-preview__strong" />;
@@ -89,21 +88,41 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
               return <del {...props} className="markdown-preview__strike" />;
             },
             img(props) {
-              return <img {...props} className="markdown-preview__image" />;
+              return <img {...props} className="markdown-preview__image" alt={props.alt || ""} />;
             },
-            table(props) {
+            table({ children, ...props }: any) {
               return (
                 <div className="markdown-preview__table-wrap">
-                  <table {...props} className="markdown-preview__table" />
+                  <table {...props} className="markdown-preview__table">
+                    {children}
+                  </table>
                 </div>
               );
             },
-            code({ inline, className, children, ...props }: CodeProps) {
-              if (inline) {
+            thead(props) {
+              return <thead {...props} className="markdown-preview__thead" />;
+            },
+            tbody(props) {
+              return <tbody {...props} className="markdown-preview__tbody" />;
+            },
+            tr(props) {
+              return <tr {...props} className="markdown-preview__tr" />;
+            },
+            th(props) {
+              return <th {...props} className="markdown-preview__th" />;
+            },
+            td(props) {
+              return <td {...props} className="markdown-preview__td" />;
+            },
+            code({ node, inline, className, children, ...props }: any) {
+              const match = /language-(\w+)/.exec(className || "");
+              const isInline = inline || !match;
+
+              if (isInline) {
                 return (
                   <code
                     {...props}
-                    className={`markdown-preview__inline-code ${className ?? ""}`.trim()}
+                    className="markdown-preview__inline-code"
                   >
                     {children}
                   </code>
@@ -112,7 +131,10 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
 
               return (
                 <pre className="markdown-preview__code">
-                  <code {...props} className={className}>
+                  <code
+                    {...props}
+                    className={`${match ? className : ""}`.trim()}
+                  >
                     {children}
                   </code>
                 </pre>
